@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project Recommendations - Career Twin</title>
+    <link rel="stylesheet" href="/static/projects.css">
+</head>
+<body>
+
+<nav id="navbar">
+    <a class="nav-logo">CarrerTwin</a>
+    <div class="nav-cta">
+        <a href="dashboard.html" class="btn-dashb">Dashboard</a>
+    </div>
+</nav>
+
+<div class="projects-container">
+    <h1>🚀 Project Recommendations</h1>
+    <p>Choose your career goal to get curated project ideas with tech stack and tips.</p>
+
+    <label>Select Your Career Goal</label>
+    <select id="careerGoal">
+        <option>Select Goal</option>
+        <option>Python Developer</option>
+        <option>Backend Developer</option>
+        <option>Full Stack Developer</option>
+        <option>Data Analyst</option>
+    </select>
+
+    <button onclick="showProjects()">Get Project Ideas</button>
+
+    <div id="projectList" class="project-grid"></div>
+</div>
+
+<script>
+const projects = {
+    "Python Developer": [
+        { title: "Todo CLI App", desc: "A command-line task manager using Python and file handling.", stack: "Python, File I/O", level: "Beginner" },
+        { title: "Web Scraper", desc: "Scrape job listings from a website and save to CSV.", stack: "Python, BeautifulSoup, CSV", level: "Intermediate" },
+        { title: "Expense Tracker", desc: "Track daily expenses with charts using matplotlib.", stack: "Python, Matplotlib, Pandas", level: "Intermediate" },
+        { title: "Telegram Bot", desc: "Build a bot that answers career-related questions.", stack: "Python, Telegram API", level: "Advanced" }
+    ],
+    "Backend Developer": [
+        { title: "REST API", desc: "Build a CRUD REST API for a blog with authentication.", stack: "Python, Flask, MySQL", level: "Beginner" },
+        { title: "Login System", desc: "User registration, login, and JWT-based auth system.", stack: "Django, SQLite, JWT", level: "Intermediate" },
+        { title: "E-commerce Backend", desc: "Product, cart, and order management API.", stack: "Django REST Framework, PostgreSQL", level: "Advanced" },
+        { title: "File Upload API", desc: "API that accepts, stores, and serves uploaded files.", stack: "Flask, AWS S3", level: "Intermediate" }
+    ],
+    "Full Stack Developer": [
+        { title: "Portfolio Website", desc: "Your personal portfolio with projects and contact form.", stack: "HTML, CSS, JavaScript", level: "Beginner" },
+        { title: "Notes App", desc: "Full stack notes app with login and CRUD.", stack: "Django, HTML, CSS, JS", level: "Intermediate" },
+        { title: "Job Board", desc: "Post and search jobs with filters and user auth.", stack: "React, Django, PostgreSQL", level: "Advanced" },
+        { title: "Chat App", desc: "Real-time messaging app using WebSockets.", stack: "Django Channels, React, Redis", level: "Advanced" }
+    ],
+    "Data Analyst": [
+        { title: "Sales Dashboard", desc: "Analyze monthly sales data with charts and trends.", stack: "Python, Pandas, Matplotlib", level: "Beginner" },
+        { title: "COVID Data Analysis", desc: "Explore and visualize global COVID statistics.", stack: "Python, Pandas, Seaborn", level: "Beginner" },
+        { title: "Movie Recommender", desc: "Recommend movies based on genre and rating similarity.", stack: "Python, Scikit-learn, Pandas", level: "Intermediate" },
+        { title: "Power BI Report", desc: "Interactive HR analytics dashboard in Power BI.", stack: "Power BI, Excel, SQL", level: "Intermediate" }
+    ]
+};
+
+const levelColor = { Beginner: "#2a7a2a", Intermediate: "#b8860b", Advanced: "#c0392b" };
+
+function showProjects() {
+    const goal = document.getElementById("careerGoal").value;
+    if (goal === "Select Goal") { alert("Please select a career goal"); return; }
+
+    const list = projects[goal];
+    const grid = document.getElementById("projectList");
+    grid.innerHTML = list.map(p => `
+        <div class="project-card">
+            <div class="level-badge" style="background:${levelColor[p.level]}">${p.level}</div>
+            <h3>${p.title}</h3>
+            <p>${p.desc}</p>
+            <div class="stack-tag">🛠 ${p.stack}</div>
+        </div>
+    `).join("");
+    grid.style.display = "grid";
+}
+</script>
+
+</body>
+</html>

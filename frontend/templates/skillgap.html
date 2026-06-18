@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Skill Gap Analysis - Career Twin</title>
+    <link rel="stylesheet" href="/static/skillgap.css">
+</head>
+<body>
+
+<nav id="navbar">
+    <a class="nav-logo">CarrerTwin</a>
+    <div class="nav-cta">
+        <a href="dashboard.html" class="btn-dashb">Dashboard</a>
+    </div>
+</nav>
+
+<div class="skillgap-container">
+    <h1>🧠 Skill Gap Analysis</h1>
+    <p>Select your target role and enter your current skills to see what you're missing.</p>
+
+    <label>Target Role</label>
+    <select id="targetRole">
+        <option>Select Goal</option>
+        <option>Python Developer</option>
+        <option>Backend Developer</option>
+        <option>Full Stack Developer</option>
+        <option>Data Analyst</option>
+    </select>
+
+    <label>Your Current Skills (comma separated)</label>
+    <textarea id="userSkills" placeholder="e.g. Python, HTML, CSS"></textarea>
+
+    <button onclick="analyzeGap()">Analyze Skill Gap</button>
+
+    <div id="result" class="result-box">
+        <div class="columns">
+            <div class="col have">
+                <h3>✅ Skills You Have</h3>
+                <ul id="haveList"></ul>
+            </div>
+            <div class="col missing">
+                <h3>❌ Skills You Need</h3>
+                <ul id="missingList"></ul>
+            </div>
+        </div>
+        <div class="score-bar-wrap">
+            <p id="scoreText"></p>
+            <div class="score-track">
+                <div class="score-fill" id="scoreFill"></div>
+            </div>
+        </div>
+        <a href="roadmap.html"><button class="btn-secondary">Generate Roadmap →</button></a>
+    </div>
+</div>
+
+<script>
+const roleSkills = {
+    "Python Developer":    ["Python","OOP","File Handling","MySQL","Flask","Git","APIs"],
+    "Backend Developer":   ["Python","SQL","MySQL","Flask","Django","Git","REST APIs","Authentication"],
+    "Full Stack Developer":["HTML","CSS","JavaScript","Python","Django","Git","React","SQL"],
+    "Data Analyst":        ["Python","Excel","SQL","Pandas","NumPy","Power BI","Data Visualization","Statistics"]
+};
+
+function analyzeGap() {
+    const role = document.getElementById("targetRole").value;
+    const userInput = document.getElementById("userSkills").value;
+
+    if (role === "Select Goal") { alert("Please select a target role"); return; }
+    if (!userInput.trim()) { alert("Please enter your current skills"); return; }
+
+    const userSkills = userInput.split(",").map(s => s.trim().toLowerCase());
+    const required = roleSkills[role];
+
+    const have = required.filter(s => userSkills.includes(s.toLowerCase()));
+    const missing = required.filter(s => !userSkills.includes(s.toLowerCase()));
+    const pct = Math.round((have.length / required.length) * 100);
+
+    document.getElementById("haveList").innerHTML = have.map(s => `<li>${s}</li>`).join("") || "<li>None matched</li>";
+    document.getElementById("missingList").innerHTML = missing.map(s => `<li>${s}</li>`).join("") || "<li>You have all skills!</li>";
+    document.getElementById("scoreText").textContent = `You match ${pct}% of required skills for ${role}`;
+    document.getElementById("scoreFill").style.width = pct + "%";
+    document.getElementById("result").style.display = "block";
+}
+</script>
+
+</body>
+</html>

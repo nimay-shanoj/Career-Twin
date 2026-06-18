@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Progress Tracking - Career Twin</title>
+    <link rel="stylesheet" href="/static/progress.css">
+</head>
+<body>
+
+<nav id="navbar">
+    <a class="nav-logo">CarrerTwin</a>
+    <div class="nav-cta">
+        <a href="dashboard.html" class="btn-dashb">Dashboard</a>
+    </div>
+</nav>
+
+<div class="progress-container">
+    <h1>📈 Progress Tracking</h1>
+    <p>Track your learning milestones and mark tasks as complete.</p>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-num" id="completedCount">0</div>
+            <div class="stat-label">Tasks Completed</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num" id="totalCount">0</div>
+            <div class="stat-label">Total Tasks</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num" id="pctCount">0%</div>
+            <div class="stat-label">Overall Progress</div>
+        </div>
+    </div>
+
+    <div class="overall-bar-wrap">
+        <div class="bar-track"><div class="bar-fill" id="overallBar"></div></div>
+    </div>
+
+    <div class="section-title-row">
+        <h2>Learning Milestones</h2>
+        <select id="filterGoal" onchange="filterTasks()">
+            <option value="all">All Goals</option>
+            <option value="Python Developer">Python Developer</option>
+            <option value="Backend Developer">Backend Developer</option>
+            <option value="Full Stack Developer">Full Stack Developer</option>
+            <option value="Data Analyst">Data Analyst</option>
+        </select>
+    </div>
+
+    <div id="taskList" class="task-list"></div>
+
+    <button onclick="resetProgress()" class="btn-reset">Reset Progress</button>
+</div>
+
+<script>
+const allTasks = [
+    { id:1, goal:"Python Developer",    task:"Python Basics",         desc:"Variables, loops, conditionals" },
+    { id:2, goal:"Python Developer",    task:"OOP in Python",          desc:"Classes, inheritance, methods" },
+    { id:3, goal:"Python Developer",    task:"File Handling",          desc:"Read/write files with Python" },
+    { id:4, goal:"Python Developer",    task:"MySQL with Python",      desc:"Connect and query a database" },
+    { id:5, goal:"Python Developer",    task:"Flask Basics",           desc:"Build a simple web app" },
+    { id:6, goal:"Backend Developer",   task:"REST API Design",        desc:"Understand HTTP methods & endpoints" },
+    { id:7, goal:"Backend Developer",   task:"Django Setup",           desc:"Create a Django project" },
+    { id:8, goal:"Backend Developer",   task:"Authentication",         desc:"User login & JWT tokens" },
+    { id:9, goal:"Backend Developer",   task:"Database Modeling",      desc:"Design tables and relationships" },
+    { id:10, goal:"Full Stack Developer", task:"HTML & CSS",           desc:"Build responsive web pages" },
+    { id:11, goal:"Full Stack Developer", task:"JavaScript Basics",    desc:"DOM, events, fetch API" },
+    { id:12, goal:"Full Stack Developer", task:"React Fundamentals",   desc:"Components, props, state" },
+    { id:13, goal:"Full Stack Developer", task:"Django + React",       desc:"Connect frontend and backend" },
+    { id:14, goal:"Data Analyst",       task:"Python for Data",        desc:"NumPy and Pandas basics" },
+    { id:15, goal:"Data Analyst",       task:"SQL Querying",           desc:"SELECT, JOIN, GROUP BY" },
+    { id:16, goal:"Data Analyst",       task:"Data Visualization",     desc:"Matplotlib and Seaborn" },
+    { id:17, goal:"Data Analyst",       task:"Power BI",               desc:"Build an interactive dashboard" },
+];
+
+let progressData = {
+    tasks: allTasks,
+    completed_ids: [],
+    completed_count: 0,
+    total_tasks: allTasks.length,
+    progress_pct: 0
+};
+
+async function fetchProgress() {
+    try {
+        const response = await fetch('/api/progress');
+        if (!response.ok) throw new Error('Unable to fetch progress');
+        const data = await response.json();
+        progressData = { ...progressData, ...data };
+    } catch (error) {
+        console.warn('Progress API unavailable, using local fallback', error);
+        progressData.tasks = allTasks;
+        progressData.completed_ids = [];
+        progressData.completed_count = 0;
+        progressData.total_tasks = allTasks.length;
+        progressData.progress_pct = 0;
+    }
+    renderTasks();
+    updateStats();
+}
+
+function getCompletedIds() {
+    return progressData.completed_ids || [];
+}
+
+async function toggle(id) {
+    const completed = !getCompletedIds().includes(id);
+    try {
+        const response = await fetch('/api/progress/toggle', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task_id: id, completed })
+        });
+        if (!response.ok) throw new Error('Could not toggle task');
+        await fetchProgress();
+    } catch (error) {
+        alert('Unable to update task status. Please try again.');
+        console.error(error);
+    }
+}
+
+function filterTasks() { renderTasks(); }
+
+function renderTasks() {
+    const filter = document.getElementById('filterGoal').value;
+    const done = getCompletedIds();
+    const tasks = filter === 'all' ? progressData.tasks : progressData.tasks.filter(t => t.goal === filter);
+    const list = document.getElementById('taskList');
+    list.innerHTML = tasks.map(t => `
+        <div class="task-item ${done.includes(t.id) ? 'done' : ''}">
+            <input type="checkbox" id="t${t.id}" ${done.includes(t.id) ? 'checked' : ''} onchange="toggle(${t.id})">
+            <label for="t${t.id}">
+                <span class="task-name">${t.task}</span>
+                <span class="task-desc">${t.desc}</span>
+                <span class="goal-tag">${t.goal}</span>
+            </label>
+        </div>
+    `).join('');
+}
+
+function updateStats() {
+    const total = progressData.total_tasks || allTasks.length;
+    const completed = progressData.completed_count || getCompletedIds().length;
+    const pct = total ? Math.round((completed / total) * 100) : 0;
+    document.getElementById('completedCount').textContent = completed;
+    document.getElementById('totalCount').textContent = total;
+    document.getElementById('pctCount').textContent = pct + '%';
+    document.getElementById('overallBar').style.width = pct + '%';
+}
+
+async function resetProgress() {
+    if (!confirm('Reset all progress?')) return;
+    try {
+        const response = await fetch('/api/progress/reset', { method: 'POST' });
+        if (!response.ok) throw new Error('Could not reset progress');
+        await fetchProgress();
+    } catch (error) {
+        alert('Unable to reset progress. Please try again.');
+        console.error(error);
+    }
+}
+
+fetchProgress();
+</script>
+
+</body>
+</html>

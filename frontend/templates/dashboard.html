@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Career Twin Dashboard</title>
+    <link rel="stylesheet" href="/static/dashboard.css">
+</head>
+<body>
+    <nav id = "navbar">
+    <a class = "nav-logo">
+        CarrerTwin
+    </a>
+    <div class="nav-cta">
+    <a href="/" class="btn-land">Home</a>
+    <a href="/dashboard" class="btn-dash">Dashboard</a>
+    <a href="/logout" class="btn-land" style="color: #ff6b6b; border: 1px solid #ff6b6b;">Logout</a>
+  </div>
+</nav>
+
+<h1>Welcome to Career Twin, {{ current_user.name }}</h1>
+
+<div class="dashboard-container">
+
+    <a href="/profile" class="card">
+        👤
+        <h3>Profile</h3>
+    </a>
+
+    <a href="/resume" class="card">
+        📄
+        <h3>Resume Analyzer</h3>
+    </a>
+
+    <a href="/roadmap" class="card">
+        🗺️
+        <h3>Roadmap Generator</h3>
+    </a>
+
+    <a href="/skillgap" class="card">
+        🧠
+        <h3>Skill Gap Analysis</h3>
+    </a>
+
+    <a href="/projects" class="card">
+        🚀
+        <h3>Project Recommendations</h3>
+    </a>
+
+    <a href="/quiz" class="card">
+        📝
+        <h3>Quiz</h3>
+    </a>
+
+    <a href="/progress" class="card">
+        📈
+        <h3>Progress Tracking</h3>
+    </a>
+
+    <a href="/overview" class="card">
+        📊
+        <h3>Dashboard Overview</h3>
+    </a>
+
+</div>
+
+</body>
+</html>

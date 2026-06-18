@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Roadmap Generator</title>
+    <link rel="stylesheet" href="/static/roadmap.css">
+</head>
+
+<body>
+<nav id = "navbar">
+    <a class = "nav-logo">
+        CarrerTwin
+    </a>
+    <div class="nav-cta">
+    <a href="dashboard.html" class="btn-dashb">Dashboard </a> <!-- i want to link this button directly to login page-->
+  </div>
+</nav>
+<div class="roadmap-container">
+
+    <h1>Roadmap Generator</h1>
+
+    <p>Select your career goal</p>
+
+    <select id="career">
+        <option>Select Goal</option>
+        <option>Python Developer</option>
+        <option>Backend Developer</option>
+        <option>Full Stack Developer</option>
+        <option>Data Analyst</option>
+    </select>
+
+    <button onclick="generateRoadmap()">
+        Generate Roadmap
+    </button>
+
+    <div id="roadmap" class="roadmap-box"></div>
+
+</div>
+
+<script src="/static/roadmap.js"></script>
+
+</body>
+</html>

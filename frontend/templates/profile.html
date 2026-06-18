@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile - Career Twin</title>
+    <link rel="stylesheet" href="/static/profile.css">
+</head>
+<body>
+     <nav id = "navbar">
+    <a class = "nav-logo">
+        CarrerTwin
+    </a>
+    <div class="nav-cta">
+    <a href="dashboard.html" class="btn-dashb">Dashboard</a>
+    <a href="/logout" class="btn-dashb" style="color: #ff6b6b; border: 1px solid #ff6b6b; margin-left: 10px;">Logout</a>
+  </div>
+</nav>
+
+<div class="profile-container">
+
+    <h1>Create Your Profile</h1>
+
+    <form action="/profile" method="POST">
+        {% if error_msg %}
+        <div style="color: #ff6b6b; margin-bottom: 15px; font-size: 14px; font-weight: bold; text-align: center;">{{ error_msg }}</div>
+        {% endif %}
+
+        <label>Full Name</label>
+        <input type="text" name="name" placeholder="Enter your name" value="{{ current_user.name }}"
+            required>
+
+        <label>Email</label>
+        <input type="email" name="email" placeholder="Enter your email" value="{{ current_user.email }}" required readonly>
+
+        <label>Phone Number</label>
+        <input type="text" name="phone" placeholder="Enter phone number" value="{{ current_user.profile.phone or '' }}" required>
+
+        <label>College Name</label>
+        <input type="text" name="college_name" placeholder="Enter college name" value="{{ current_user.profile.college_name or '' }}" required>
+
+        <label>Degree</label>
+        <input type="text" name="degree" placeholder="Enter degree" value="{{ current_user.profile.degree or '' }}" required>
+
+        <label>Skills</label>
+        <textarea name="skills" placeholder="Python, HTML, CSS" required>{{ current_user.profile.skills or '' }}</textarea >
+
+        <label>Career Goal</label>
+        <select name="career_goal" required>
+            <option value="">Select Goal</option>
+            <option value="Python Developer" {% if current_user.profile and current_user.profile.career_goal == 'Python Developer' %}selected{% endif %}>Python Developer</option>
+            <option value="Backend Developer" {% if current_user.profile and current_user.profile.career_goal == 'Backend Developer' %}selected{% endif %}>Backend Developer</option>
+            <option value="Full Stack Developer" {% if current_user.profile and current_user.profile.career_goal == 'Full Stack Developer' %}selected{% endif %}>Full Stack Developer</option>
+            <option value="Data Analyst" {% if current_user.profile and current_user.profile.career_goal == 'Data Analyst' %}selected{% endif %}>Data Analyst</option>
+        </select>
+
+        <button type="submit">
+            Save Profile
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

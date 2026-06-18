@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard Overview - Career Twin</title>
+    <link rel="stylesheet" href="/static/overview.css">
+</head>
+<body>
+
+<nav id="navbar">
+    <a class="nav-logo">CarrerTwin</a>
+    <div class="nav-cta">
+        <a href="dashboard.html" class="btn-dashb">Dashboard</a>
+    </div>
+</nav>
+
+<div class="overview-container">
+    <h1>📊 Dashboard Overview</h1>
+    <p>Your career readiness snapshot at a glance.</p>
+
+    <div class="cards-row">
+        <div class="ov-card green">
+            <div class="ov-icon">🎯</div>
+            <div class="ov-info">
+                <div class="ov-label">Career Goal</div>
+                <div class="ov-value" id="goalVal">Not Set</div>
+            </div>
+        </div>
+        <div class="ov-card lime">
+            <div class="ov-icon">📈</div>
+            <div class="ov-info">
+                <div class="ov-label">Progress</div>
+                <div class="ov-value" id="progressVal">0%</div>
+            </div>
+        </div>
+        <div class="ov-card white">
+            <div class="ov-icon">✅</div>
+            <div class="ov-info">
+                <div class="ov-label">Tasks Done</div>
+                <div class="ov-value" id="tasksDone">0 / 17</div>
+            </div>
+        </div>
+        <div class="ov-card white">
+            <div class="ov-icon">📝</div>
+            <div class="ov-info">
+                <div class="ov-label">Quiz Score</div>
+                <div class="ov-value" id="quizVal">No quiz taken</div>
+            </div>
+        </div>
+    </div>
+
+    <h2>Module Status</h2>
+    <div class="module-list">
+        <div class="module-row" onclick="location.href='/profile'">
+            <span class="module-icon">👤</span>
+            <span class="module-name">Profile</span>
+            <span class="module-status status-go">Visit →</span>
+        </div>
+        <div class="module-row" onclick="location.href='/resume'">
+            <span class="module-icon">📄</span>
+            <span class="module-name">Resume Analyzer</span>
+            <span class="module-status status-go">Visit →</span>
+        </div>
+        <div class="module-row" onclick="location.href='/roadmap'">
+            <span class="module-icon">🗺️</span>
+            <span class="module-name">Roadmap Generator</span>
+            <span class="module-status status-go">Visit →</span>
+        </div>
+        <div class="module-row" onclick="location.href='/skillgap'">
+            <span class="module-icon">🧠</span>
+            <span class="module-name">Skill Gap Analysis</span>
+            <span class="module-status status-go">Visit →</span>
+        </div>
+        <div class="module-row" onclick="location.href='/projects'">
+            <span class="module-icon">🚀</span>
+            <span class="module-name">Project Recommendations</span>
+            <span class="module-status status-go">Visit →</span>
+        </div>
+        <div class="module-row" onclick="location.href='/quiz'">
+            <span class="module-icon">📝</span>
+            <span class="module-name">Quiz & Assessment</span>
+            <span class="module-status status-go">Visit →</span>
+        </div>
+        <div class="module-row" onclick="location.href='/progress'">
+            <span class="module-icon">📈</span>
+            <span class="module-name">Progress Tracking</span>
+            <span class="module-status status-go">Visit →</span>
+        </div>
+    </div>
+
+    <div class="tip-box">
+        💡 <strong>Tip:</strong> Start with your Profile → then Skill Gap Analysis → then generate your Roadmap for the best experience!
+    </div>
+</div>
+
+<script>
+async function loadOverview() {
+    try {
+        const response = await fetch('/api/overview');
+        if (!response.ok) throw new Error('Unable to fetch overview');
+        const data = await response.json();
+        document.getElementById('goalVal').textContent = data.career_goal || 'Not Set';
+        document.getElementById('progressVal').textContent = data.progress_pct + '%';
+        document.getElementById('tasksDone').textContent = data.tasks_done || '0 / 17';
+        document.getElementById('quizVal').textContent = data.quiz_score || 'No quiz taken';
+    } catch (error) {
+        console.error('Overview load failed', error);
+    }
+}
+
+loadOverview();
+</script>
+
+</body>
+</html>

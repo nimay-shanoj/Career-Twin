@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resume Analyzer</title>
+    <link rel="stylesheet" href="/static/resume.css">
+</head>
+
+<body>
+<nav id = "navbar">
+    <a class = "nav-logo">
+        CarrerTwin
+    </a>
+    <div class="nav-cta">
+    <a href="dashboard.html" class="btn-dashb">Dashboard</a>
+    <a href="/logout" class="btn-dashb" style="color: #ff6b6b; border: 1px solid #ff6b6b; margin-left: 10px;">Logout</a>
+  </div>
+</nav>
+<div class="resume-container">
+
+    <h1>Resume Analyzer</h1>
+
+    <p>Upload your resume and get skill insights.</p>
+
+    <input type="file" id="resumeFile">
+
+    <button onclick="analyzeResume()">
+        Analyze Resume
+    </button>
+
+    <div id="result" class="result-box" style="display:none;">
+        <h2 id="resultTitle">Resume Score: --</h2>
+        <div id="scoreValue" style="margin-bottom:20px;color:#777;font-size:14px;"></div>
+
+        <h3>Skills Found</h3>
+        <ul id="skillsList"></ul>
+
+        <h3>Suggestions</h3>
+        <ul id="suggestionsList"></ul>
+
+        <a href="/roadmap">
+            <button id="generateRoadmapButton">Generate Roadmap</button>
+        </a>
+    </div>
+
+</div>
+
+<script src="/static/resume.js"></script>
+
+</body>
+</html>

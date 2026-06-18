@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz - Career Twin</title>
+    <link rel="stylesheet" href="/static/quiz.css">
+</head>
+<body>
+
+<nav id="navbar">
+    <a class="nav-logo">CarrerTwin</a>
+    <div class="nav-cta">
+        <a href="dashboard.html" class="btn-dashb">Dashboard</a>
+    </div>
+</nav>
+
+<div class="quiz-container">
+    <h1>📝 Career Quiz</h1>
+    <p>Find your ideal tech role through our comprehensive 20-question compatibility quiz.</p>
+
+    <div id="setup">
+        <p style="margin-bottom: 20px; color: rgba(255,255,255,0.7); font-size: 15px; line-height: 1.6; text-align: left;">
+            Our comprehensive 20-question Career Assessment covers Python, frontend structure, SQL database querying, and general computer science logic. Completing it returns a statistical analysis of your compatibility with our target roles:
+        </p>
+        <div style="margin-bottom: 25px; text-align: left; display: inline-block; font-size: 14px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); width: 100%; box-sizing: border-box;">
+            <span style="color: #4facfe;">✔ Python Developer</span><br>
+            <span style="color: #00f2fe; margin-top: 5px; display: inline-block;">✔ Backend Developer</span><br>
+            <span style="color: #2af598; margin-top: 5px; display: inline-block;">✔ Full Stack Developer</span><br>
+            <span style="color: #febb2c; margin-top: 5px; display: inline-block;">✔ Data Analyst</span>
+        </div>
+        <button onclick="startQuiz()" style="width: 100%; padding: 14px; font-size: 16px;">Start Career Assessment Quiz</button>
+
+        <div id="historyBox" style="margin-top: 30px; display: none;">
+            <h3 style="margin-bottom: 12px; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px;">Previous Attempts</h3>
+            <div id="historyList" style="max-height: 200px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <div id="quizBox" style="display:none">
+        <div class="question-header">
+            <span id="questionNum"></span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+        <div class="question-card">
+            <p id="questionText"></p>
+            <div id="options" class="options-grid"></div>
+        </div>
+        <button id="nextBtn" onclick="nextQuestion()" style="display:none">Next Question →</button>
+    </div>
+
+    <div id="resultBox" class="result-box" style="display:none">
+        <h2 id="finalScore"></h2>
+        <p id="finalMsg"></p>
+        
+        <div id="careerBars" style="margin: 25px 0; padding: 20px; background: #ffffff; border-radius: 12px; border: 1px solid rgba(13,59,46,0.12); box-shadow: 0 4px 12px rgba(13,59,46,0.05); text-align: left;">
+            <h4 style="margin-bottom: 15px; color: #0d3b2e; font-weight: 700; border-bottom: 1px solid rgba(13,59,46,0.1); padding-bottom: 8px; margin-top: 0;">Career Compatibility Breakdown</h4>
+            <div id="barsContainer"></div>
+        </div>
+
+        <button onclick="resetQuiz()">Try Again</button>
+        <a href="dashboard.html"><button class="btn-outline">Back to Dashboard</button></a>
+    </div>
+</div>
+
+<script>
+const questions = [
+    // --- PYTHON (1 to 5) ---
+    {
+        q: "1. Which keyword is used to define a function in Python?",
+        opts: ["func", "def", "define", "function"],
+        ans: 1,
+        weights: { "Python Developer": 5, "Backend Developer": 4, "Full Stack Developer": 3, "Data Analyst": 3 }
+    },
+    {
+        q: "2. What is the output of print(type([])) in Python?",
+        opts: ["&lt;class 'tuple'&gt;", "&lt;class 'dict'&gt;", "&lt;class 'list'&gt;", "&lt;class 'array'&gt;"],
+        ans: 2,
+        weights: { "Python Developer": 5, "Backend Developer": 4, "Full Stack Developer": 3, "Data Analyst": 4 }
+    },
+    {
+        q: "3. Which Python data structure is unordered, mutable, and does not allow duplicate elements?",
+        opts: ["List", "Tuple", "Set", "Dictionary"],
+        ans: 2,
+        weights: { "Python Developer": 5, "Data Analyst": 5, "Backend Developer": 4, "Full Stack Developer": 3 }
+    },
+    {
+        q: "4. What is the primary use of the 'pandas' library in Python?",
+        opts: ["Web Development", "Game Design", "Data Analysis & Manipulation", "Cryptography"],
+        ans: 2,
+        weights: { "Data Analyst": 5, "Python Developer": 4, "Backend Developer": 2 }
+    },
+    {
+        q: "5. How do you handle exceptions in Python?",
+        opts: ["try-catch", "try-except", "throw-catch", "do-except"],
+        ans: 1,
+        weights: { "Python Developer": 5, "Backend Developer": 5, "Full Stack Developer": 4, "Data Analyst": 2 }
+    },
+    // --- HTML & CSS (6 to 10) ---
+    {
+        q: "6. Which HTML tag is used for the largest heading?",
+        opts: ["&lt;h6&gt;", "&lt;h1&gt;", "&lt;head&gt;", "&lt;title&gt;"],
+        ans: 1,
+        weights: { "Full Stack Developer": 5, "Python Developer": 1 }
+    },
+    {
+        q: "7. Which CSS property changes the text color of an element?",
+        opts: ["font-color", "text-color", "color", "foreground"],
+        ans: 2,
+        weights: { "Full Stack Developer": 5 }
+    },
+    {
+        q: "8. What is the purpose of the 'flexbox' layout model in CSS?",
+        opts: ["Database connection", "Responsive layout alignment", "Server routing", "Data encryption"],
+        ans: 1,
+        weights: { "Full Stack Developer": 5 }
+    },
+    {
+        q: "9. What does HTML stand for?",
+        opts: ["Hyperlink Text Markup Language", "Hypertext Markup Language", "Home Tool Markup Language", "Hypertext Machine Language"],
+        ans: 1,
+        weights: { "Full Stack Developer": 5 }
+    },
+    {
+        q: "10. In CSS, how do you select an element with the id 'header'?",
+        opts: [".header", "#header", "*header", "header:"],
+        ans: 1,
+        weights: { "Full Stack Developer": 5 }
+    },
+    // --- SQL & DATABASE (11 to 15) ---
+    {
+        q: "11. Which SQL command retrieves data from a database?",
+        opts: ["GET", "FETCH", "SELECT", "RETRIEVE"],
+        ans: 2,
+        weights: { "Data Analyst": 5, "Backend Developer": 5, "Full Stack Developer": 4 }
+    },
+    {
+        q: "12. Which SQL clause is used to filter rows based on conditions?",
+        opts: ["HAVING", "ORDER BY", "WHERE", "GROUP BY"],
+        ans: 2,
+        weights: { "Data Analyst": 5, "Backend Developer": 5, "Full Stack Developer": 4 }
+    },
+    {
+        q: "13. What does a 'PRIMARY KEY' ensure in a table?",
+        opts: ["Unique and non-null values for a column", "Fastest query results", "Links to another table", "Sorted order of records"],
+        ans: 0,
+        weights: { "Backend Developer": 5, "Data Analyst": 5, "Full Stack Developer": 4 }
+    },
+    {
+        q: "14. Which type of database join returns all rows from both tables even if there is no match?",
+        opts: ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL OUTER JOIN"],
+        ans: 3,
+        weights: { "Data Analyst": 5, "Backend Developer": 5, "Full Stack Developer": 3 }
+    },
+    {
+        q: "15. What is the purpose of a FOREIGN KEY constraint in SQL?",
+        opts: ["To uniquely identify rows", "To ensure referential integrity between tables", "To speed up data sorting", "To create a table copy"],
+        ans: 1,
+        weights: { "Backend Developer": 5, "Full Stack Developer": 4, "Data Analyst": 3 }
+    },
+    // --- GENERAL CS / LOGIC (16 to 20) ---
+    {
+        q: "16. Which data structure uses the Last-In-First-Out (LIFO) method?",
+        opts: ["Queue", "Array", "Stack", "Linked List"],
+        ans: 2,
+        weights: { "Backend Developer": 5, "Full Stack Developer": 4, "Python Developer": 4, "Data Analyst": 2 }
+    },
+    {
+        q: "17. What is an API?",
+        opts: ["A type of database storage", "Application Programming Interface", "A networking hardware protocol", "A web browser framework"],
+        ans: 1,
+        weights: { "Backend Developer": 5, "Full Stack Developer": 5, "Python Developer": 4 }
+    },
+    {
+        q: "18. What is the average time complexity of the Merge Sort algorithm?",
+        opts: ["O(n)", "O(n^2)", "O(n log n)", "O(log n)"],
+        ans: 2,
+        weights: { "Backend Developer": 5, "Python Developer": 4, "Data Analyst": 3 }
+    },
+    {
+        q: "19. What does CPU stand for?",
+        opts: ["Central Process Unit", "Central Processing Unit", "Core Processing Unit", "Central Program Unit"],
+        ans: 1,
+        weights: { "Backend Developer": 4, "Python Developer": 4, "Full Stack Developer": 4, "Data Analyst": 4 }
+    },
+    {
+        q: "20. In programming, what is recursion?",
+        opts: ["A function calling itself", "A loops structure that runs forever", "A type of database indexing", "A method for web scraping"],
+        ans: 0,
+        weights: { "Python Developer": 5, "Backend Developer": 5, "Full Stack Developer": 4, "Data Analyst": 2 }
+    }
+];
+
+const maxScores = {
+    "Python Developer": 0,
+    "Backend Developer": 0,
+    "Full Stack Developer": 0,
+    "Data Analyst": 0
+};
+questions.forEach(q => {
+    for (let key in q.weights) {
+        maxScores[key] += q.weights[key];
+    }
+});
+
+let current = 0, score = 0, answered = false;
+let userScores = {
+    "Python Developer": 0,
+    "Backend Developer": 0,
+    "Full Stack Developer": 0,
+    "Data Analyst": 0
+};
+
+function startQuiz() {
+    current = 0; score = 0; answered = false;
+    userScores = {
+        "Python Developer": 0,
+        "Backend Developer": 0,
+        "Full Stack Developer": 0,
+        "Data Analyst": 0
+    };
+    document.getElementById("setup").style.display = "none";
+    document.getElementById("resultBox").style.display = "none";
+    document.getElementById("quizBox").style.display = "block";
+    showQuestion();
+}
+
+function showQuestion() {
+    answered = false;
+    const q = questions[current];
+    document.getElementById("questionNum").textContent = `Question ${current + 1} of ${questions.length}`;
+    document.getElementById("scoreDisplay").textContent = `Score: ${score}`;
+    document.getElementById("questionText").textContent = q.q;
+    document.getElementById("nextBtn").style.display = "none";
+    const opts = document.getElementById("options");
+    opts.innerHTML = q.opts.map((o, i) =>
+        `<button class="opt-btn" onclick="selectAnswer(this, ${i}, ${q.ans})">${o}</button>`
+    ).join("");
+}
+
+function selectAnswer(btn, selected, correct) {
+    if (answered) return;
+    answered = true;
+    const q = questions[current];
+    const btns = document.querySelectorAll(".opt-btn");
+    btns.forEach((b, i) => {
+        b.disabled = true;
+        if (i === correct) b.classList.add("correct");
+        else if (i === selected && selected !== correct) b.classList.add("wrong");
+    });
+    if (selected === correct) {
+        score++;
+        for (let key in q.weights) {
+            userScores[key] += q.weights[key];
+        }
+    }
+    document.getElementById("scoreDisplay").textContent = `Score: ${score}`;
+    document.getElementById("nextBtn").style.display = current < questions.length - 1 ? "block" : "none";
+    if (current === questions.length - 1) setTimeout(showResult, 800);
+}
+
+function nextQuestion() {
+    current++;
+    showQuestion();
+}
+
+function showResult() {
+    document.getElementById("quizBox").style.display = "none";
+    
+    // Calculate compatibility percentages
+    let compatibilities = {};
+    let bestRole = "";
+    let highestPercentage = -1;
+    
+    for (let role in maxScores) {
+        let percent = Math.round((userScores[role] / maxScores[role]) * 100);
+        compatibilities[role] = percent;
+        if (percent > highestPercentage) {
+            highestPercentage = percent;
+            bestRole = role;
+        }
+    }
+    
+    const msg = highestPercentage >= 75 
+        ? `You show strong compatibility for a career as a ${bestRole}! 🎉` 
+        : `Your answers show good potential. Explore the ${bestRole} pathway to build your skills! 💪`;
+        
+    document.getElementById("finalScore").innerHTML = `Recommended Career: <span style="color:#1a5c44">${bestRole}</span> (${highestPercentage}% compatibility)`;
+    document.getElementById("finalMsg").textContent = msg;
+    
+    // Generate compatibility progress bars
+    const colors = {
+        "Python Developer": "#4a90e2",      // Soft Blue
+        "Backend Developer": "#1a5c44",     // Brand Green
+        "Full Stack Developer": "#8b5cf6",    // Soft Purple
+        "Data Analyst": "#f59e0b"           // Amber Orange
+    };
+    
+    const barsContainer = document.getElementById("barsContainer");
+    barsContainer.innerHTML = Object.keys(compatibilities).map(role => `
+        <div style="margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; color: #333333; font-weight: 600;">
+                <span>${role}</span>
+                <span>${compatibilities[role]}%</span>
+            </div>
+            <div style="height: 10px; background: #e8ece4; border-radius: 5px; overflow: hidden;">
+                <div style="height: 100%; width: ${compatibilities[role]}%; background: ${colors[role] || '#fff'}; border-radius: 5px;"></div>
+            </div>
+        </div>
+    `).join("");
+    
+    document.getElementById("resultBox").style.display = "block";
+
+    // Submit statistical results to database
+    fetch('/api/quiz/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            topic: 'Career Compatibility Assessment',
+            score: score,
+            total_questions: questions.length,
+            percentage: highestPercentage,
+            compatible_career: bestRole,
+            compatibility_scores: compatibilities
+        })
+    })
+    .then(res => res.json())
+    .then(data => console.log("Career assessment submitted:", data))
+    .catch(err => console.error("Error submitting assessment:", err));
+}
+
+function resetQuiz() {
+    document.getElementById("resultBox").style.display = "none";
+    document.getElementById("setup").style.display = "block";
+    loadHistory();
+}
+
+function loadHistory() {
+    fetch('/api/quiz/history')
+    .then(res => res.json())
+    .then(data => {
+        if (data.history && data.history.length > 0) {
+            const historyBox = document.getElementById("historyBox");
+            const historyList = document.getElementById("historyList");
+            historyList.innerHTML = data.history.map(item => `
+                <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 6px; margin-bottom: 8px; font-size: 14px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                        <span>Recommended: <strong style="color: #00f2fe">${item.compatible_career}</strong></span>
+                        <span style="color: rgba(255,255,255,0.4); font-size: 12px;">${item.taken_at}</span>
+                    </div>
+                    <div style="font-size: 12px; color: rgba(255,255,255,0.6);">
+                        Correct Answers: ${item.score}/${item.total_questions} | Top Match: ${item.percentage}%
+                    </div>
+                </div>
+            `).join("");
+            historyBox.style.display = "block";
+        }
+    })
+    .catch(err => console.error("Error loading history:", err));
+}
+
+document.addEventListener("DOMContentLoaded", loadHistory);
+</script>
+
+</body>
+</html>
